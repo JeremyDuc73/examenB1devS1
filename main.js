@@ -166,8 +166,13 @@ function getLinkCreatePostTemplate(){
         `
         return template
     }
+}
 
-
+function getLinkSendCommentTemplate(){
+    let template = `
+            <button class="buttonCreatePostLink btn" id="linkSendCommentPage">Commenter le post</button>
+        `
+    return template
 }
 
 function getCreatePostTemplate(){
@@ -290,7 +295,7 @@ function displayCreatePostPage(){
 function displaySpecificPostPage(idPost){
     getSpecificPostFromApi(idPost).then(specificPost=>{
         display(getSpecificPostTemplate(specificPost))
-        displaySecondContainer(getCommentsTemplate(specificPost))
+        displaySecondContainer(getCommentsTemplate(specificPost) + getLinkSendCommentTemplate())
 
         const buttonsDelete = document.querySelectorAll('.buttonDelete')
         buttonsDelete.forEach(buttonDelete =>{
@@ -446,6 +451,25 @@ function modifyPost(postId){
             "Content-Type" : "application/json",
             "Authorization" : `Bearer ${token}`
         },
+        body: bodySerialise
+    }
+    fetch(url, fetchParams)
+        .then(response=>response.json())
+        .then(()=>{
+            displayPostsPage()
+        })
+}
+
+function sendComment(postId){
+    let url = `${baseURL}comment/${postId}`
+    let body = {
+        content : sendCommentTextArea.value
+    }
+
+    let bodySerialise = JSON.stringify(body)
+
+    let fetchParams = {
+        method : "POST",
         body: bodySerialise
     }
     fetch(url, fetchParams)
